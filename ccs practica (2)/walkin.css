@@ -1,0 +1,65 @@
+.caja{
+width: 700px;
+height: 700px;
+background-color: aqua;
+border: 5px solid chocolate;
+}
+.caja:hover {
+    background-color: rgb(202, 156, 4);
+}
+
+img {
+width: 500px;
+height: 450px;
+margin-left: 80px;
+margin-top: 30px;
+border-radius: 50%;
+border: 4px solid purple;
+}
+
+
+.osiris{
+width:700px;
+height:700px;
+background-color: rgb(141, 179, 8);
+border:5px solid rgb(15, 15, 15);
+}
+.osiris:hover {
+    background-color: rgb(9, 77, 116);
+}
+
+img {
+width:500px;
+height:450px;
+margin-left: 80px;
+margin-top: 30px;
+border-radius: 50%;
+border: 4px solid rgb(158, 138, 25);
+}
+
+
+.eusebio {
+width: 700px;
+height: 700px;
+background-color: black;
+border: 5px solid rgb(177, 127, 36);
+} 
+.eusebio:hover {
+    background-color: brown;
+}
+
+img {
+    width: 500px;
+    height: 450px;
+    margin-left: 80px;
+    margin-top: 30px;
+    border-radius: 50%;
+    border: 4px solid rgb(14, 168, 91);
+}
+
+.eusebio {
+    width: 700px;
+    height: 700px;
+    background-color: cadetblue;
+    border: 5px solid rgb(170, 15, 15);
+}

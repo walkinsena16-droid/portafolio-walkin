@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSHOP</title>
+    <!--
+      <link> — Etiqueta de enlace externo. No muestra nada en la página, pero conecta
+               recursos externos (fuentes, hojas de estilo, favicons, etc.).
+      rel="stylesheet" — Atributo que le dice al navegador QUÉ tipo de relación tiene
+                         el archivo enlazado. "stylesheet" significa hoja de estilos CSS.
+      href — Atributo que indica la URL (ruta) del recurso a cargar.
+    -->
+
+    <!-- Carga las fuentes Syncopate e Inter desde Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Carga la hoja de estilos externa del proyecto (walkin.css) -->
+    <link rel="stylesheet" href="walkin.css">
+    <style>
+        /* ===== BUSCADOR ===== */
+        #search-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        #search-input {
+            background: rgba(15,15,15,0.85);
+            border: 1.5px solid rgba(255,255,255,0.18);
+            color: #fff;
+            border-radius: 50px;
+            padding: 11px 20px 11px 46px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            width: 320px;
+            outline: none;
+            transition: border 0.2s, width 0.3s, background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+        }
+        #search-input::placeholder { color: rgba(255,255,255,0.35); }
+        #search-input:focus {
+            border-color: #e63946;
+            background: rgba(10,10,10,0.95);
+            width: 390px;
+            box-shadow: 0 4px 24px rgba(230,57,70,0.18);
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            font-size: 17px;
+            color: rgba(255,255,255,0.45);
+            pointer-events: none;
+        }
+        #search-clear {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            font-size: 17px;
+            line-height: 1;
+            padding: 0;
+            display: none;
+        }
+        #search-clear:hover { color: #e63946; }
+
+        /* ===== AUTENTICACIÓN ===== */
+        #auth-overlay {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at top, rgba(0, 212, 255, 0.1), transparent 34%),
+                rgba(2, 4, 8, 0.82);
+            backdrop-filter: blur(12px);
+            z-index: 16000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        #auth-overlay.show {
+            display: flex;
+        }
+        .auth-shell {
+            width: min(100%, 450px);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.025) 100%),
+                #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 22px;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.55);
+            padding: 32px 30px 26px;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-shell::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(135deg, rgba(0,212,255,0.12), transparent 42%),
+                radial-gradient(circle at bottom right, rgba(0,212,255,0.08), transparent 30%);
+            pointer-events: none;
+        }
+        .auth-card {
+            width: 100%;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+        .auth-card h3 {
+            margin: 0 0 10px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 20px;
+            line-height: 1.3;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .auth-card p {
+            margin: 0 0 22px;
+            color: #8b8b8b;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        .auth-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin: 2px 0 22px;
+            background: none;
+            border: none;
+            color: #00d4ff;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .auth-back:hover {
+            color: #fff;
+        }
+        .auth-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            z-index: 1;
+        }
+        .auth-close:hover {
+            border-color: rgba(0,212,255,0.45);
+            background: rgba(0,212,255,0.12);
+        }
+        .auth-grid {
+            display: grid;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-field {
+            display: grid;
+            gap: 8px;
+        }
+        .auth-field label {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 12px;
+            color: #b9b9b9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .auth-grid input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            color: #fff;
+            border-radius: 10px;
+            padding: 15px 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .auth-grid input::placeholder {
+            color: rgba(255,255,255,0.35);
+        }
+        .auth-grid input:focus {
+            border-color: #00d4ff;
+            background: rgba(255,255,255,0.055);
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.12);
+        }
+        .password-strength {
+            display: none;
+            gap: 10px;
+            align-items: center;
+            margin-top: 2px;
+        }
+        .password-strength.show {
+            display: grid;
+        }
+        .password-strength-bars {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            flex: 1;
+        }
+        .password-strength-bars span {
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .password-strength-bars span.active {
+            transform: scaleY(1.05);
+        }
+        .password-strength-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #8b8b8b;
+            white-space: nowrap;
+        }
+        .password-strength.weak .password-strength-bars span:nth-child(1) {
+            background: #e63946;
+        }
+        .password-strength.medium .password-strength-bars span:nth-child(-n+2) {
+            background: #f4b942;
+        }
+        .password-strength.strong .password-strength-bars span:nth-child(-n+3) {
+            background: #00d4ff;
+        }
+        .password-hint {
+            display: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #8b8b8b;
+            line-height: 1.5;
+            margin-top: 4px;
+        }
+        .password-hint.show {
+            display: block;
+        }
+        .password-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #b2b2b2;
+            cursor: pointer;
+            user-select: none;
+        }
+        .password-toggle input {
+            width: 15px;
+            height: 15px;
+            accent-color: #00d4ff;
+            cursor: pointer;
+        }
+        .auth-actions {
+            display: block;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-actions button {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 16px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.2s ease;
+            width: 100%;
+        }
+        .auth-actions button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(0, 212, 255, 0.16);
+        }
+        .auth-actions button:disabled {
+            cursor: wait;
+            opacity: 0.65;
+            transform: none;
+        }
+        .auth-actions .primary {
+            background: #00d4ff;
+            color: #000;
+        }
+        .auth-actions .secondary {
+            background: #fff;
+            color: #000;
+        }
+        #auth-feedback {
+            display: none;
+            margin-top: 16px;
+            border-radius: 10px;
+            padding: 13px 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+        #auth-feedback.show { display: block; }
+        #auth-feedback.success {
+            background: rgba(46, 125, 50, 0.18);
+            border: 1px solid rgba(76, 175, 80, 0.35);
+            color: #9be7a1;
+        }
+        #auth-feedback.error {
+            background: rgba(198, 40, 40, 0.16);
+            border: 1px solid rgba(230, 57, 70, 0.35);
+            color: #ff9aa2;
+        }
+        #auth-status {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #7e7e7e;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-switch {
+            margin-top: 18px;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #888;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-switch button {
+            border: none;
+            background: none;
+            color: #00d4ff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .auth-switch button:hover {
+            color: #fff;
+        }
+        .profile-area {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            border-radius: 999px;
+        }
+        .profile-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #00d4ff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .profile-copy {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .profile-copy strong {
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 170px;
+        }
+        .profile-copy span {
+            color: #8e8e8e;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+        }
+        .profile-logout {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: transparent;
+            color: #fff;
+            border-radius: 999px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            flex-wrap: nowrap;
+            flex-shrink: 0;
+            min-width: max-content;
+        }
+        .nav-right a {
+            margin-right: 0;
+            white-space: nowrap;
+        }
+        .nav-right .btn-login {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        @media (max-width: 640px) {
+            .auth-shell { padding: 28px 20px 22px; }
+            .auth-card h3 { font-size: 17px; }
+            .profile-copy { display: none; }
+            .nav-right a { display: none; }
+        }
+
+        /* ===== BANNER DE BÚSQUEDA ===== */
+        #search-banner {
+            display: none;
+            background: #111;
+            border-bottom: 1px solid #222;
+            padding: 14px 24px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: #888;
+        }
+        #search-banner span { color: #fff; font-weight: 600; }
+        #no-results {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            font-family: 'Inter', sans-serif;
+            color: #555;
+        }
+        #no-results .nr-icon { font-size: 48px; margin-bottom: 12px; }
+        #no-results p { font-size: 14px; line-height: 1.7; }
+
+        /* ===== BOTÓN CARRITO ===== */
+        #cart-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 9999;
+            background: #fff;
+            color: #111;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 22px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        #cart-btn:hover { transform: scale(1.05); box-shadow: 0 8px 32px rgba(0,0,0,0.45); }
+        #cart-count {
+            background: #e63946;
+            color: #fff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        #cart-count.bump { transform: scale(1.6); }
+
+        /* ===== OVERLAY ===== */
+        #cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #cart-overlay.show { opacity: 1; pointer-events: all; }
+
+        /* ===== MODAL CARRITO ===== */
+        #cart-drawer {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        #cart-drawer.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .cart-modal-inner {
+            background: #0d0d0d;
+            color: #fff;
+            border-radius: 20px;
+            width: 520px;
+            max-width: 94vw;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+            transform: scale(0.92) translateY(16px);
+            transition: transform 0.28s cubic-bezier(0.34,1.2,0.64,1);
+            overflow: hidden;
+        }
+        #cart-drawer.open .cart-modal-inner {
+            transform: scale(1) translateY(0);
+        }
+        .cart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 22px 24px 16px;
+            border-bottom: 1px solid #222;
+            flex-shrink: 0;
+        }
+        .cart-header h2 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+        .cart-header h2 span { color: #e63946; }
+        .cart-close {
+            background: none;
+            border: 1px solid #333;
+            color: #fff;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .cart-close:hover { background: #222; }
+
+        #cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 80px;
+        }
+        #cart-items::-webkit-scrollbar { width: 4px; }
+        #cart-items::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+        .cart-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: #555;
+            font-family: 'Inter', sans-serif;
+        }
+        .cart-empty .empty-icon { font-size: 44px; margin-bottom: 10px; }
+        .cart-empty p { font-size: 14px; line-height: 1.6; }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 12px 14px;
+            animation: fadeUp 0.22s ease;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .cart-item-info { flex: 1; min-width: 0; }
+        .cart-item-info h4 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 9px;
+            letter-spacing: 1px;
+            margin: 0 0 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cart-item-info .item-price {
+            color: #e63946;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .item-subtotal {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .qty-btn {
+            background: #2a2a2a;
+            border: 1px solid #333;
+            color: #fff;
+            width: 28px; height: 28px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .qty-btn:hover { background: #3a3a3a; }
+        .qty-num {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 22px;
+            text-align: center;
+        }
+        .cart-item-remove {
+            background: none;
+            border: none;
+            color: #444;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 6px;
+            transition: color 0.15s;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .cart-item-remove:hover { color: #e63946; }
+
+        /* ===== RESUMEN ===== */
+        #cart-summary {
+            padding: 12px 24px;
+            border-top: 1px solid #1a1a1a;
+            background: #111;
+            flex-shrink: 0;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .summary-row.items-count span:last-child { color: #aaa; }
+
+        .cart-footer {
+            padding: 16px 24px 22px;
+            border-top: 1px solid #222;
+            flex-shrink: 0;
+        }
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+        }
+        .cart-total span:first-child {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: #888;
+        }
+        .cart-total span:last-child {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            transition: color 0.2s;
+        }
+        #btn-checkout {
+            width: 100%;
+            background: #e63946;
+            color: #fff;
+            border: none;
+            padding: 16px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        #btn-checkout:hover { background: #12b5c1; }
+        #btn-checkout:active { transform: scale(0.98); }
+        #btn-checkout:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* ===== MODAL ÉXITO ===== */
+        #modal-success {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #modal-success.show { display: flex; }
+        .success-box {
+            background: #0d0d0d;
+            border: 1px solid #222;
+            border-radius: 20px;
+            padding: 48px 40px;
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+            animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.75); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .success-icon {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: #1a3a1a;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+        .success-box h2 {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #fff;
+            margin: 0 0 10px;
+        }
+        .success-box h2 span { color: #39cce6; }
+        .success-box p {
+            font-family: 'Inter', sans-serif;
+            color: #888;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0 0 28px;
+        }
+        #btn-success-close {
+            background: #39d2e6;
+            color: #fff;
+            border: none;
+            padding: 14px 36px;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 11px;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #btn-success-close:hover { background: #c1121f; }
+
+        /* ===== FEEDBACK AL AGREGAR ===== */
+        .btn-buy.added {
+            background: #1a3a1a !important;
+            color: #4caf50 !important;
+            pointer-events: none;
+        }
+
+        /* ===== OCULTAR CARDS EN BÚSQUEDA ===== */
+        .shoe-card.hidden { display: none; }
+        /* ===== DROPDOWN CATÁLOGO NAV ===== */
+        .nav-catalog-wrap { position: relative; }
+        .nav-catalog-wrap > a { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .catalog-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 14px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0d0d0d;
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 16px;
+            width: 580px;
+            max-width: 94vw;
+            z-index: 8000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .catalog-dropdown.open { display: grid; }
+        .catalog-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 10px 12px;
+            text-decoration: none;
+            transition: background 0.15s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .catalog-dropdown-item:hover { background: #242424; border-color: #333; }
+        .catalog-dropdown-item img {
+            width: 46px; height: 46px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+            background: #111;
+        }
+        .catalog-dropdown-item .cat-info { min-width: 0; }
+        .catalog-dropdown-item .cat-name {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; font-weight: 600; color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .catalog-dropdown-item .cat-price {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px; color: #e63946; font-weight: 600; margin-top: 2px;
+        }
+        .catalog-dropdown-header {
+            grid-column: 1 / -1;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 10px; letter-spacing: 2px; color: #555;
+            padding: 0 4px 6px;
+            border-bottom: 1px solid #1e1e1e; margin-bottom: 4px;
+        }
+        .catalog-dropdown-footer {
+            grid-column: 1 / -1;
+            text-align: center; margin-top: 4px;
+        }
+        .catalog-dropdown-footer a {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px; color: #e63946; text-decoration: none; transition: color 0.15s;
+        }
+        .catalog-dropdown-footer a:hover { color: #fff; }
+
+        /* ===== MODAL PAGO ===== */
+        #payment-modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 25000; display: none;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        #payment-modal.show { display: flex; }
+        .payment-box {
+            background: #0d0d0d; border: 1px solid #222; border-radius: 20px;
+            width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto;
+            animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .payment-box::-webkit-scrollbar { width: 4px; }
+        .payment-box::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        .payment-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 22px 16px; border-bottom: 1px solid #1e1e1e;
+        }
+        .payment-header h2 { font-family: 'Syncopate', sans-serif; font-size: 13px; letter-spacing: 2px; color: #fff; margin: 0; }
+        .payment-header h2 span { color: #e63946; }
+        .payment-close {
+            background: none; border: 1px solid #333; color: #fff;
+            width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+            font-size: 16px; display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s; flex-shrink: 0;
+        }
+        .payment-close:hover { background: #222; }
+        .payment-body { padding: 20px 22px; }
+        .payment-total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #111; border-radius: 10px; padding: 12px 16px; margin-bottom: 18px;
+        }
+        .payment-total-row span:first-child { font-family: 'Inter', sans-serif; font-size: 12px; color: #888; }
+        .payment-total-row span:last-child { font-family: 'Syncopate', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+        .payment-methods-label { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 2px; color: #555; margin-bottom: 10px; }
+        .payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .pay-method-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            background: #1a1a1a; border: 2px solid #222; border-radius: 12px;
+            padding: 16px 10px; cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            color: #aaa; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
+        }
+        .pay-method-btn .pay-icon { font-size: 26px; }
+        .pay-method-btn:hover { background: #222; border-color: #444; color: #fff; }
+        .pay-method-btn.selected { border-color: #e63946; background: #1e0a0b; color: #fff; }
+        .payment-form { display: none; }
+        .payment-form.show { display: block; }
+        .payment-form .pf-label { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 1.5px; color: #888; margin-bottom: 6px; display: block; }
+        .payment-form input, .payment-form select {
+            width: 100%; background: #111; border: 1px solid #2a2a2a; color: #fff;
+            border-radius: 9px; padding: 13px 14px; font-family: 'Inter', sans-serif;
+            font-size: 14px; outline: none; margin-bottom: 12px;
+            transition: border-color 0.2s; box-sizing: border-box;
+        }
+        .payment-form input::placeholder { color: #444; }
+        .payment-form input:focus, .payment-form select:focus { border-color: #e63946; }
+        .payment-form select { cursor: pointer; }
+        .payment-form select option { background: #111; }
+        .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .paypal-info { background: #0f1b2d; border: 1px solid #1a3a6e; border-radius: 10px; padding: 14px 16px; text-align: center; margin-bottom: 14px; }
+        .paypal-info p { font-family: 'Inter', sans-serif; font-size: 13px; color: #6ba3e8; line-height: 1.5; margin: 0; }
+        .paypal-email { font-weight: 700; color: #fff; display: block; margin-top: 6px; font-size: 14px; }
+        .transfer-info { background: #0f1f13; border: 1px solid #1a4a25; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; }
+        .transfer-info p { font-family: 'Inter', sans-serif; font-size: 13px; color: #7ecb8f; line-height: 1.7; margin: 0; }
+        .transfer-info strong { color: #fff; }
+        #btn-confirm-pay {
+            width: 100%; background: #e63946; color: #fff; border: none;
+            padding: 15px; font-family: 'Syncopate', sans-serif; font-size: 12px;
+            font-weight: 700; letter-spacing: 3px; border-radius: 10px; cursor: pointer;
+            transition: background 0.2s, transform 0.1s; margin-top: 4px;
+        }
+        #btn-confirm-pay:hover { background: #12b5c1; }
+        #btn-confirm-pay:active { transform: scale(0.98); }
+        #btn-confirm-pay:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+
+        /* ===== MODAL SELECCIÓN DE TALLA ===== */
+        #size-modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.80);
+            backdrop-filter: blur(6px);
+            z-index: 18000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #size-modal.show { display: flex; }
+        .size-box {
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            padding: 32px 28px 26px;
+            max-width: 400px;
+            width: 100%;
+            animation: popIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+        }
+        .size-box-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .size-box h3 { font-family: 'Syncopate', sans-serif; font-size: 12px; letter-spacing: 2px; color: #fff; margin: 0; line-height: 1.4; max-width: 80%; }
+        .size-box-close { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
+        .size-box-close:hover { background: #e63946; border-color: #e63946; }
+        .size-price { font-family: 'Syncopate', sans-serif; font-size: 18px; color: #e63946; font-weight: 700; margin: 10px 0 18px; }
+        .size-subtitle { font-family: 'Inter', sans-serif; font-size: 12px; color: #555; margin-bottom: 16px; }
+        .size-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .size-btn { background: #1a1a1a; border: 1.5px solid #2a2a2a; color: #bbb; border-radius: 9px; padding: 10px 16px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 52px; text-align: center; transition: all 0.15s; }
+        .size-btn:hover { border-color: #e63946; color: #fff; background: rgba(230,57,70,0.1); }
+        .size-btn.selected { background: #e63946; border-color: #e63946; color: #fff; transform: scale(1.07); }
+        .size-confirm-btn { width: 100%; background: #e63946; color: #fff; border: none; padding: 14px; font-family: 'Syncopate', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; border-radius: 10px; cursor: pointer; transition: background 0.2s, opacity 0.2s; opacity: 0.35; pointer-events: none; }
+        .size-confirm-btn.activo { opacity: 1; pointer-events: auto; }
+        .size-confirm-btn.activo:hover { background: #12b5c1; }
+    </style>
+</head>
+<body>
+
+    <!--
+      <button> — Etiqueta de botón interactivo. Crea un elemento que el usuario puede
+                 hacer clic. Puede ejecutar funciones JavaScript mediante eventos como
+                 onclick. A diferencia de <a>, no navega a otra página por defecto.
+    -->
+
+    <!-- BOTÓN FLOTANTE DEL CARRITO -->
+    <button id="cart-btn" onclick="abrirCarrito()">
+        🛒 Carrito
+        <!--
+          <span> — Contenedor en línea (inline) sin significado semántico propio.
+                   Se usa para aplicar estilos o identificar una porción de texto
+                   dentro de otro elemento, sin romper el flujo del contenido.
+        -->
+        <span id="cart-count">0</span>
+    </button>
+
+    <!--
+      <div> — Etiqueta de división o contenedor de bloque (block-level).
+              No tiene significado semántico propio; se usa para agrupar y
+              organizar otros elementos, facilitando la aplicación de estilos
+              con CSS o la manipulación con JavaScript.
+    -->
+
+    <!-- OVERLAY (fondo oscuro semitransparente al abrir el carrito) -->
+    <div id="cart-overlay" onclick="cerrarCarrito()"></div>
+
+    <!-- MODAL CARRITO -->
+    <div id="cart-drawer">
+        <div class="cart-modal-inner">
+            <div class="cart-header">
+                <!--
+                  <h2> — Encabezado de segundo nivel (Heading 2). Los encabezados van
+                          de <h1> (el más importante, título principal) hasta <h6>
+                          (el menos importante). Definen la jerarquía y estructura del
+                          contenido de la página. Solo debe haber un <h1> por página.
+                -->
+                <h2>KICK<span>SHOP</span> — CARRITO</h2>
+                <button class="cart-close" onclick="cerrarCarrito()">✕</button>
+            </div>
+            <div id="cart-items">
+                <div class="cart-empty" id="cart-empty-msg">
+                    <div class="empty-icon">👟</div>
+                    <!--
+                      <p> — Etiqueta de párrafo. Define un bloque de texto independiente.
+                            El navegador añade espacio automático arriba y abajo de cada
+                            párrafo para separarlo visualmente del resto del contenido.
+                    -->
+                    <p>Tu carrito está vacío.<br>¡Agrega un par!</p>
+                </div>
+            </div>
+            <div id="cart-summary" style="display:none;">
+                <div class="summary-row items-count">
+                    <span>Artículos en el carrito</span>
+                    <span id="summary-count">0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="summary-subtotal">RD$0</span>
+                </div>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>TOTAL</span>
+                    <span id="cart-total-price">RD$0</span>
+                </div>
+                <button id="btn-checkout" onclick="finalizarCompra()" disabled>FINALIZAR COMPRA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ÉXITO -->
+    <div id="modal-success">
+        <div class="success-box">
+            <div class="success-icon">✓</div>
+            <h2>KICK<span>SHOP</span></h2>
+            <p>¡Compra exitosa!<br>Gracias por preferir <strong style="color:#fff;">KICKSHOP</strong>.<br>Tu pedido está en camino. 🚀</p>
+            <button id="btn-success-close" onclick="cerrarExito()">CONTINUAR</button>
+        </div>
+    </div>
+
+    <div id="auth-overlay" onclick="closeAuthModal(event)">
+        <div class="auth-shell">
+            <button class="auth-close" type="button" onclick="closeAuthModal()">✕</button>
+            <div class="auth-card">
+                <!--
+                  <h3> — Encabezado de tercer nivel. Está por debajo de <h2> en la
+                          jerarquía. Se usa para sub-secciones dentro de una sección
+                          ya encabezada por un <h2>.
+                -->
+                <h3 id="auth-title">Bienvenido</h3>
+                <p id="auth-subtitle">Ingresa a tu cuenta para continuar comprando en KICKSHOP.</p>
+                <button class="auth-back" type="button" onclick="closeAuthModal()">← Volver al inicio</button>
+                <div class="auth-grid">
+                    <div class="auth-field" id="nombre-field" style="display:none;">
+                        <!--
+                          <label> — Etiqueta descriptiva para un campo de formulario.
+                                    Al hacer clic en el label, el navegador enfoca
+                                    automáticamente el input asociado (via atributo "for"
+                                    que debe coincidir con el "id" del input).
+                                    Mejora la accesibilidad para usuarios con discapacidad.
+                        -->
+                        <label for="nombre">Nombre completo</label>
+                        <!--
+                          <input> — Campo de entrada de datos del usuario. Es una etiqueta
+                                    de cierre automático (no necesita </input>). Su comportamiento
+                                    cambia según el atributo "type":
+                                      type="text"     → campo de texto libre
+                                      type="email"    → valida formato de correo electrónico
+                                      type="password" → oculta los caracteres escritos
+                                      type="checkbox" → casilla de verificación (marcado/desmarcado)
+                                    El atributo "placeholder" muestra un texto de ayuda gris
+                                    cuando el campo está vacío.
+                        -->
+                        <input type="text" id="nombre" placeholder="Tu nombre">
+                    </div>
+                    <div class="auth-field">
+                        <label for="email" id="email-label">Correo electrónico</label>
+                        <input type="email" id="email" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="auth-field">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" placeholder="Mínimo 6 caracteres">
+                        <div id="password-strength" class="password-strength">
+                            <div class="password-strength-bars">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span id="password-strength-text" class="password-strength-text">Sin evaluar</span>
+                        </div>
+                        <div id="password-hint" class="password-hint">
+                            Usa 8+ caracteres, mayúscula, minúscula, número y símbolo.
+                        </div>
+                        <label class="password-toggle" for="toggle-password">
+                            <input type="checkbox" id="toggle-password" onchange="togglePasswordVisibility()">
+                            Mostrar contraseña
+                        </label>
+                    </div>
+                </div>
+                <div class="auth-actions">
+                    <button id="login-btn" class="secondary" type="button" onclick="login()">Entrar</button>
+                    <button id="register-btn" class="primary" type="button" onclick="register()" style="display:none;">Finalizar registro</button>
+                </div>
+                <div id="auth-feedback"></div>
+                <div class="auth-switch">
+                    <span id="auth-switch-copy">¿No tienes cuenta?</span>
+                    <button id="auth-switch-btn" type="button" onclick="switchAuthMode()">Crea una aquí</button>
+                </div>
+                <div id="auth-status">No has iniciado sesión.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="glass-nav" style="display:flex; align-items:center; justify-content:space-between; gap:20px;">
+        <div class="logo">KICK<span>SHOP</span></div>
+        <div id="search-wrap" style="position:relative; flex:1; display:flex; justify-content:center; min-width:220px; max-width:480px; margin:0 24px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Buscar tenis..." oninput="buscarProductos(this.value)" autocomplete="off">
+            <button id="search-clear" onclick="limpiarBusqueda()">✕</button>
+        </div>
+        <div class="nav-right">
+            <div class="nav-catalog-wrap" id="nav-catalog-wrap">
+                <a href="#catalogo" onclick="toggleCatalogDropdown(event)">Catálogo ▾</a>
+                <div class="catalog-dropdown" id="catalog-dropdown">
+                    <div class="catalog-dropdown-header">TENIS DESTACADOS</div>
+                    <a class="catalog-dropdown-item" href="#catalogo" onclick="closeCatalogDropdown()">
+                        <!--
+                          <img> — Etiqueta de imagen. Es de cierre automático (no necesita </img>).
+                                  Atributos importantes:
+                                    src  → ruta o URL de la imagen a mostrar
+                                    alt  → texto alternativo: se muestra si la imagen no carga
+                                           y es leído por lectores de pantalla (accesibilidad).
+                                           SIEMPRE debe describir el contenido de la imagen.
+                        -->
+                        <img src="Shattered.avif" alt="Jordan 1 Shattered">
+                        <div class="cat-info">
+                            <div class="cat-name">Jordan 1 Shattered</div>
+                            <div class="cat-price">RD$11,900</div>
+                        </div>
+                    </a>
+                    <a class="catalog-dropdown-item" href="#catalogo" onclick="closeCatalogDropdown()">
+                        <img src="JORDAN.jpg" alt="Jordan 5 Soft Pink">
+                        <div class="cat-info">
+                            <div class="cat-name">Jordan 5 Soft Pink</div>
+                            <div class="cat-price">RD$18,000</div>
+                        </div>
+                    </a>
+                    <a class="catalog-dropdown-item" href="#presentacion" onclick="closeCatalogDropdown()">
+                        <img src="balenciaga.webp" alt="Balenciaga Track Led">
+                        <div class="cat-info">
+                            <div class="cat-name">Balenciaga Track</div>
+                            <div class="cat-price">RD$56,800</div>
+                        </div>
+                    </a>
+                    <a class="catalog-dropdown-item" href="#presentacion" onclick="closeCatalogDropdown()">
+                        <img src="Adidas Samba.webp" alt="Adidas Samba">
+                        <div class="cat-info">
+                            <div class="cat-name">Adidas Samba</div>
+                            <div class="cat-price">RD$7,000</div>
+                        </div>
+                    </a>
+                    <a class="catalog-dropdown-item" href="#presentacion" onclick="closeCatalogDropdown()">
+                        <img src="New Balance.webp" alt="New Balance 9060">
+                        <div class="cat-info">
+                            <div class="cat-name">New Balance 9060</div>
+                            <div class="cat-price">RD$8,900</div>
+                        </div>
+                    </a>
+                    <a class="catalog-dropdown-item" href="#presentacion" onclick="closeCatalogDropdown()">
+                        <img src="alexander mcqueen.avif" alt="Alexander McQueen">
+                        <div class="cat-info">
+                            <div class="cat-name">Alexander McQueen</div>
+                            <div class="cat-price">RD$29,400</div>
+                        </div>
+                    </a>
+                    <div class="catalog-dropdown-footer">
+                        <a href="#catalogo" onclick="closeCatalogDropdown()">Ver todo el catálogo →</a>
+                    </div>
+                </div>
+            </div>
+            <a href="#info">Contacto</a>
+            <button id="nav-login-btn" class="btn-login" type="button" onclick="openAuthModal('login')">INICIAR SESIÓN</button>
+            <button id="nav-register-btn" class="btn-login" type="button" onclick="openAuthModal('register')">REGISTRARSE</button>
+            <div id="profile-area" class="profile-area">
+                <div id="profile-badge" class="profile-badge">K</div>
+                <div class="profile-copy">
+                    <strong id="profile-name">KICKSHOP</strong>
+                    <span id="profile-state">Sesión iniciada</span>
+                </div>
+                <button class="profile-logout" type="button" onclick="logout()">Salir</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- BANNER RESULTADOS DE BÚSQUEDA -->
+    <div id="search-banner">
+        Mostrando resultados para: <span id="search-term-display"></span>
+        &nbsp;&mdash;&nbsp; <span id="search-results-count"></span> producto(s) encontrado(s)
+    </div>
+
+    <header class="hero">
+        <div class="hero-text">
+            <span class="tag">EXCLUSIVIDAD EN CADA PASO</span>
+            <!--
+              <h1> — Encabezado principal de la página (el más importante).
+                      Solo debe existir UNO por página. Describe el tema central
+                      del contenido. Los motores de búsqueda (SEO) le dan mucho
+                      peso a lo que esté dentro del <h1>.
+            -->
+            <h1>JORDAN 11<br><span class="highlight">GRATITUDE</span></h1>
+            <!-- Párrafo de descripción del producto destacado -->
+            <p>La máxima expresión del legado Jordan está aquí. Calidad garantizada por KICKSHOP.</p>
+            <a href="#catalogo" class="btn-cta">EXPLORAR DROP</a>
+        </div>
+        <div class="hero-visual">
+            <!-- Imagen principal del héroe (producto destacado de la tienda) -->
+            <img src="descarga (4).jpg" alt="Featured Jordan" class="main-shoe">
+        </div>
+    </header>
+
+    <!-- SIN RESULTADOS -->
+    <div id="no-results">
+        <div class="nr-icon">🔎</div>
+        <p>No encontramos tenis que coincidan con tu búsqueda.<br>Intenta con otro nombre o marca.</p>
+    </div>
+
+    <!-- SECCIÓN 1 — Catálogo principal de Jordan -->
+    <main id="catalogo" class="container">
+        <!--
+          <h2> — Encabezado de sección. Indica el título de esta área del catálogo.
+                  Está dentro de <main> porque es un subtítulo de la página, no el
+                  título principal (ese es el <h1> del héroe).
+        -->
+        <h2 class="title-section">COLECCIÓN <span>DE TENIS</span></h2>
+        <div class="grid-productos">
+
+            <!-- ══════════════════════════════════════════
+                 TARJETA DE PRODUCTO — Estructura repetida
+                 para cada par de tenis en el catálogo.
+                 ══════════════════════════════════════════ -->
+            <div class="shoe-card" data-nombre="jordan 1 mid shattered">
+                <!-- Badge con el precio del producto -->
+                <div class="badge-price">RD$11,900</div>
+
+                <!-- Imagen del producto: src apunta al archivo local, alt describe el tenis -->
+                <img src="Shattered.avif" alt="Shattered">
+
+                <!-- Contenedor del texto inferior de la tarjeta -->
+                <div class="card-content">
+                    <!--
+                      <h3> — Nombre del producto. Tercer nivel de encabezado,
+                              apropiado dentro de una tarjeta que ya está bajo
+                              un <h2> de sección.
+                    -->
+                    <h3>Jordan 1 Mid Shattered</h3>
+
+                    <!-- Párrafo con las tallas disponibles -->
+                    <p>Sizes: 5, 6y, 7, 8y, 9</p>
+
+                    <!--
+                      <button> — Botón de compra. Al hacer clic llama a la función
+                                 JavaScript abrirSizeModal() pasando los datos del
+                                 producto (id, nombre, precio, tallas disponibles).
+                    -->
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'J1', 'Jordan 1 Mid Shattered', 11900, '5,6Y,7,8Y,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="jordan 1 metallic silver">
+                <div class="badge-price">RD$10,000</div>
+                <img src="images.jpg" alt="jordan 1 metallic silver">
+                <div class="card-content">
+                    <h3>Jordan 1 Metallic Silver</h3>
+                    <p>Sizes: 7, 8, 9, 10, 11</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'J2', 'Jordan 1 Metallic Silver', 10000, '7,8,9,10,11')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="jordan 1 mid green glow">
+                <div class="badge-price">RD$7,000</div>
+                <img src="zapatillas-nike-jordan-1-mid-dq8426-103-blanco-0000304627903.jpg" alt="StockX Ref">
+                <div class="card-content">
+                    <h3>Jordan 1 Mid Green Glow</h3>
+                    <p>Sizes: 4, 5, 6, 7, 8</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'J3', 'Jordan 1 Mid Green Glow', 7000, '4,5,6,7,8')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="jordan 5 soft pink">
+                <div class="badge-price">RD$18,000</div>
+                <img src="JORDAN.jpg" alt="Jordan 5 Soft Pink">
+                <div class="card-content">
+                    <h3>Jordan 5 Soft Pink</h3>
+                    <p>Sizes: 4, 5, 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'J5', 'Jordan 5 Soft Pink', 18000, '4,5,6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="jordan 7 true flight">
+                <div class="badge-price">RD$7,000</div>
+                <img src="jordan 7.jpg" alt="Jordan 7">
+                <div class="card-content">
+                    <h3>Jordan 7 True Flight</h3>
+                    <p>Sizes: 4, 5, 6, 7</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'J7', 'Jordan 7 True Flight', 7000, '4,5,6,7')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="jordan 12 french blue">
+                <div class="badge-price">RD$11,000</div>
+                <img src="Air-Jordan-12-Retro-French-Blue-2016-Product_V2.avif" alt="jordan 12">
+                <div class="card-content">
+                    <h3>Jordan 12 French Blue</h3>
+                    <p>Sizes: 4, 5, 6, 7, 8, 9y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'J12', 'Jordan 12 French Blue', 11000, '4,5,6,7,8,9Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- SECCIÓN 2 -->
+    <main id="presentacion" class="container">
+        <h2 class="title-section">OTROS <span>TIPOS DE TENIS</span></h2>
+        <div class="grid-productos">
+
+            <div class="shoe-card" data-nombre="botas timberland">
+                <div class="badge-price">RD$14,300</div>
+                <img src="Mens-Timberland-Premium-6Inch-Waterproof-Boot-TBL-Wheat-Nubuck-HERO.avif" alt="Botas Timberland">
+                <div class="card-content">
+                    <h3>Botas Timberland</h3>
+                    <p>Sizes: 7, 8, 9, 10y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'B1', 'Botas Timberland', 14300, '7,8,9,10Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="balenciaga track led">
+                <div class="badge-price">RD$56,800</div>
+                <img src="balenciaga.webp" alt="Balenciaga Track">
+                <div class="card-content">
+                    <h3>Balenciaga Track Led</h3>
+                    <p>Sizes: 6, 7, 8, 9, 10y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'B2', 'Balenciaga Track Led', 56800, '6,7,8,9,10Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="rick owens">
+                <div class="badge-price">RD$41,900</div>
+                <img src="ricks owens.avif" alt="Ricks Owens">
+                <div class="card-content">
+                    <h3>Ricks Owens</h3>
+                    <p>Sizes: 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'R1', 'Rick Owens', 41900, '6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="vans knu skool">
+                <div class="badge-price">RD$5,600</div>
+                <img src="Vans.webp" alt="Vans Knu Skool">
+                <div class="card-content">
+                    <h3>Vans Knu Skool</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'V1', 'Vans Knu Skool', 5600, '5,6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="asics kayano">
+                <div class="badge-price">RD$11,900</div>
+                <img src="Asics.webp" alt="Asics">
+                <div class="card-content">
+                    <h3>Asics Kayano</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'A1', 'Asics Kayano', 11900, '5,6,7,8,9Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="new balance 9060">
+                <div class="badge-price">RD$8,900</div>
+                <img src="New Balance.webp" alt="New Balance">
+                <div class="card-content">
+                    <h3>New Balance 9060</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y, 10</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'N1', 'New Balance 9060', 8900, '5,6,7,8,9Y,10')">Comprar ahora</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- SECCIÓN 3 -->
+    <main class="container">
+        <h2 class="title-section">MÁS <span>PARES DE TENIS</span></h2>
+        <div class="grid-productos">
+
+            <div class="shoe-card" data-nombre="yeezy foam runner">
+                <div class="badge-price">RD$5,300</div>
+                <img src="Yeezy.webp" alt="Yeezy">
+                <div class="card-content">
+                    <h3>Yeezy Foam Runner</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'Y1', 'Yeezy Foam Runner', 5300, '5,6,7,8,9Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="alexander mcqueen">
+                <div class="badge-price">RD$29,400</div>
+                <img src="alexander mcqueen.avif" alt="alexander mcqueen">
+                <div class="card-content">
+                    <h3>Alexander McQueen</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'A2', 'Alexander McQueen', 29400, '5,6,7,8,9Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="amiri">
+                <div class="badge-price">RD$29,000</div>
+                <img src="Amiri.webp" alt="Amiri">
+                <div class="card-content">
+                    <h3>Amiri</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y, 10</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'A3', 'Amiri', 29000, '5,6,7,8,9Y,10')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="adidas samba">
+                <div class="badge-price">RD$7,000</div>
+                <img src="Adidas Samba.webp" alt="Adidas Samba">
+                <div class="card-content">
+                    <h3>Adidas Samba</h3>
+                    <p>Sizes: 5, 6, 7, 8</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'A4', 'Adidas Samba', 7000, '5,6,7,8')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="nike blazer">
+                <div class="badge-price">RD$4,700</div>
+                <img src="Nike Blazer.webp" alt="Nike Blazer">
+                <div class="card-content">
+                    <h3>Nike Blazer</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'N2', 'Nike Blazer', 4700, '5,6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="golden goose">
+                <div class="badge-price">RD$42,000</div>
+                <img src="golden goose.avif" alt="golden goose">
+                <div class="card-content">
+                    <h3>Golden Goose</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'G1', 'Golden Goose', 42000, '5,6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+  <!-- SECCIÓN 3 -->
+    <main class="container">
+        <h2 class="title-section">TENIS <span>DEPORTIVOS</span></h2>
+        <div class="grid-productos">
+
+            <div class="shoe-card" data-nombre="Nike Mercurial U90 Soccer">
+                <div class="badge-price">RD$11,900</div>
+                <img src="calzado.webp" alt="Nike Mercurial U90 Soccer">
+                <div class="card-content">
+                    <h3>Nike Mercurial U90 Soccer</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'D1', 'Nike Mercurial U90 Soccer', 11900, '5,6,7,8,9Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="Adidas predator Elite.">
+                <div class="badge-price">RD$17,900</div>
+                <img src="Adidas predator Elite..webp" alt="Adidas predator Elite.">
+                <div class="card-content">
+                    <h3>Adidas predator Elite.</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'D2', 'Adidas predator Elite.', 17900, '5,6,7,8,9Y')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="Botines de futbol Nike Mercurial.">
+                <div class="badge-price">RD$17,800</div>
+                <img src="Botines de futbol Nike Mercurial..jpg" alt="Botines de futbol Nike Mercurial.">
+                <div class="card-content">
+                    <h3>Botines de futbol Nike Mercurial.</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9y, 10</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'D3', 'Botines de futbol Nike Mercurial.', 17800, '5,6,7,8,9Y,10')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="Nike Giannis Immortality 3">
+                <div class="badge-price">RD$6,000</div>
+                <img src="Nike Giannis Immortality 3.png" alt="Nike Giannis Immortality 3">
+                <div class="card-content">
+                    <h3>Nike Giannis Immortality 3</h3>
+                    <p>Sizes: 5, 6, 7, 8</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'D4', 'Nike Giannis Immortality 3', 6000, '5,6,7,8')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="Nike LeBron 21">
+                <div class="badge-price">RD$8,900</div>
+                <img src="Nike LeBron 21.webp" alt="Nike LeBron 21">
+                <div class="card-content">
+                    <h3>Nike LeBron 21</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'D5', 'Nike LeBron 21', 8900, '5,6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+            <div class="shoe-card" data-nombre="Nike Kyrie Infinity">
+                <div class="badge-price">RD$7,700</div>
+                <img src="Nike Kyrie Infinity.webp" alt="Nike Kyrie Infinity">
+                <div class="card-content">
+                    <h3>Nike Kyrie Infinity</h3>
+                    <p>Sizes: 5, 6, 7, 8, 9</p>
+                    <button class="btn-buy" onclick="abrirSizeModal(this, 'D6', 'Nike Kyrie Infinity', 7700, '5,6,7,8,9')">Comprar ahora</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="info">
+        <div class="footer-grid">
+            <div class="footer-box">
+                <h4>UBICACIÓN</h4>
+                <p>Distrito Nacional, Santo Domingo, R.D.</p>
+                <p><strong>Tel:</strong> (829) 563 6030</p>
+            </div>
+            <div class="footer-box">
+                <h4>HORARIO</h4>
+                <p>Lun - Vie: 9:00 AM – 7:00 PM</p>
+                <p>Sáb: 9:00 AM – 6:00 PM</p>
+                <p>Dom: Cerrado</p>
+            </div>
+            <div class="footer-box">
+                <h4>SÍGUENOS</h4>
+                <div class="social-links">
+                    <span>IG: @KICKSHOP</span>
+                    <span>FB: @KICKSHOP</span>
+                    <span>TK: @KICKSHOP</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>KICKSHOP - Zapatos para jóvenes y adultos con la mejor calidad.</p>
+        </div>
+    </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL PAGO — Ventana emergente para procesar el pago.
+         Se muestra al hacer clic en "Finalizar Compra".
+         ══════════════════════════════════════════════════════════ -->
+    <div id="payment-modal">
+        <div class="payment-box">
+            <div class="payment-header">
+                <!-- <h2> del modal de pago: título de la ventana emergente -->
+                <h2>KICK<span>SHOP</span> — PAGO</h2>
+                <!-- Botón para cerrar el modal de pago -->
+                <button class="payment-close" onclick="cerrarPago()">✕</button>
+            </div>
+            <div class="payment-body">
+                <div class="payment-total-row">
+                    <span>Total a pagar</span>
+                    <span id="payment-total-display">RD$0</span>
+                </div>
+                <div class="payment-methods-label">SELECCIONA TU MÉTODO DE PAGO</div>
+                <div class="payment-methods">
+                    <!-- Botón para seleccionar PayPal como método de pago -->
+                    <button class="pay-method-btn" onclick="selectPayMethod(event, 'paypal')">
+                        <span class="pay-icon">🅿️</span>
+                        PayPal
+                    </button>
+                    <!-- Botón para seleccionar Tarjeta como método de pago -->
+                    <button class="pay-method-btn" onclick="selectPayMethod(event, 'card')">
+                        <span class="pay-icon">💳</span>
+                        Tarjeta
+                    </button>
+                </div>
+
+                <!-- PayPal -->
+                <div class="payment-form" id="form-paypal">
+                    <div class="paypal-info">
+                        <!-- Instrucciones de pago vía PayPal -->
+                        <p>Envía tu pago a nuestra cuenta de PayPal:<br>
+                        <span class="paypal-email">pagos@kickshop.do</span>
+                        </p>
+                    </div>
+                    <!--
+                      <label> con class="pf-label" — Etiqueta visual para los campos
+                               del formulario de pago. Aunque aquí no tiene el atributo
+                               "for", sirve de encabezado descriptivo para el input que sigue.
+                    -->
+                    <label class="pf-label">TU CORREO PAYPAL</label>
+                    <!-- Input de tipo email para el correo de PayPal del comprador -->
+                    <input type="email" placeholder="tucorreo@paypal.com" id="paypal-email-input">
+                    <label class="pf-label">CÓDIGO NUMÉRICO</label>
+                    <!-- Input de texto para el código de confirmación de la transacción -->
+                    <input type="text" placeholder="Ej: 12345678" id="paypal-code-input" maxlength="12">
+                    <!-- Botón de confirmación del pago por PayPal -->
+                    <button id="btn-confirm-pay" onclick="confirmarPago('paypal')">CONFIRMAR PAGO</button>
+                </div>
+
+                <!-- Tarjeta -->
+                <div class="payment-form" id="form-card">
+                    <label class="pf-label">NOMBRE EN LA TARJETA</label>
+                    <!-- Input de texto para el nombre del titular de la tarjeta -->
+                    <input type="text" placeholder="Como aparece en tu tarjeta" id="card-name">
+                    <label class="pf-label">NÚMERO DE TARJETA</label>
+                    <!-- Input para el número de la tarjeta; se formatea automáticamente con JS -->
+                    <input type="text" placeholder="0000 0000 0000 0000" id="card-number" maxlength="19" oninput="formatCardNumber(this)">
+                    <div class="card-row">
+                        <div>
+                            <label class="pf-label">VENCIMIENTO</label>
+                            <!-- Input de fecha de vencimiento en formato MM/AA -->
+                            <input type="text" placeholder="MM/AA" id="card-exp" maxlength="5" oninput="formatExpiry(this)">
+                        </div>
+                        <div>
+                            <label class="pf-label">CVV</label>
+                            <!-- Input para el código de seguridad de la tarjeta (3-4 dígitos) -->
+                            <input type="text" placeholder="123" id="card-cvv" maxlength="4">
+                        </div>
+                    </div>
+                    <label class="pf-label">TIPO DE TARJETA</label>
+                    <select id="card-type">
+                        <option value="">Seleccionar...</option>
+                        <option>Visa</option>
+                        <option>Mastercard</option>
+                        <option>American Express</option>
+                    </select>
+                    <!-- Botón de confirmación del pago con tarjeta -->
+                    <button id="btn-confirm-pay" onclick="confirmarPago('card')">CONFIRMAR PAGO</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODAL SELECCIÓN DE TALLA — Aparece al hacer clic en
+         "Comprar ahora" para que el usuario elija su talla.
+         ══════════════════════════════════════════════════════════ -->
+    <div id="size-modal" onclick="if(event.target===this)cerrarSizeModal()">
+        <div class="size-box">
+            <div class="size-box-header">
+                <!--
+                  <h3> — Título del modal de talla. Tercer nivel, apropiado
+                          dentro de una ventana emergente secundaria.
+                          Su contenido se actualiza dinámicamente por JavaScript.
+                -->
+                <h3 id="size-modal-title">SELECCIONA TU TALLA</h3>
+                <!-- Botón para cerrar el modal de tallas sin seleccionar -->
+                <button class="size-box-close" onclick="cerrarSizeModal()">✕</button>
+            </div>
+            <div class="size-price" id="size-modal-price"></div>
+            <div class="size-subtitle">Elige tu Size para continuar</div>
+            <!-- Contenedor donde JS inserta dinámicamente los botones de talla -->
+            <div class="size-grid" id="size-btn-grid"></div>
+            <!--
+              <button> — Botón para confirmar la talla seleccionada y
+                          agregar el producto al carrito. Inicialmente
+                          está desactivado (clase sin "activo") hasta que
+                          el usuario escoja una talla.
+            -->
+            <button class="size-confirm-btn" id="size-confirm-btn" onclick="confirmarTalla()">AGREGAR AL CARRITO</button>
+        </div>
+    </div>
+
+    <script src="java.js"></script>
+</body>
+</html>

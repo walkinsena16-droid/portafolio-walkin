@@ -1,0 +1,285 @@
+.osiris{
+width: 200px;
+height: 200px;
+margin-left: 450px;
+margin-top: 30px;
+}
+
+.walkin {
+    border: 20px slategrey;
+}
+
+.logo {
+    text-align: center;
+    font-size: 40px;
+    font-family: 'Arial Black';
+    color: white;
+    background: linear-gradient(90deg, black, red);
+    padding: 15px;
+    border-radius: 10px;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 10px red;
+}
+/* Fondo brutal */
+.login-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, black, #1a1a1a, red);
+}
+
+/* Caja glass (efecto vidrio) */
+.login-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    color: white;
+    width: 300px;
+    box-shadow: 0 0 25px rgba(255,0,0,0.5);
+}
+
+/* Inputs flotantes */
+.input-box {
+    position: relative;
+    margin: 25px 0;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid white;
+    outline: none;
+    color: white;
+}
+
+.input-box label {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+/* Animación */
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
+    top: -15px;
+    font-size: 12px;
+    color: red;
+}
+
+/* Botón pro */
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background: red;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-box button:hover {
+    background: black;
+    box-shadow: 0 0 15px red;
+}
+
+/* Mensaje */
+#mensaje {
+    margin-top: 15px;
+    font-size: 14px;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.btn-pro {
+    position: relative;
+    padding: 12px 25px;
+    border: none;
+    color: white;
+    font-size: 14px;
+    border-radius: 30px;
+    cursor: pointer;
+    background: linear-gradient(45deg, red, black);
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+/* brillo animado */
+.btn-pro::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, white, transparent);
+    transition: 0.5s;
+}
+
+.btn-pro:hover::before {
+    left: 100%;
+}
+
+.btn-pro:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px red;
+}
+
+
+
+:root {
+    --accent: #00d4ff;
+    --dark: #0a0a0a;
+    --glass: rgba(255, 255, 255, 0.03);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+
+body {
+    background-color: var(--dark);
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Glass Navigation */
+.glass-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 8%; position: fixed; width: 100%; top: 0;
+    background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--border); z-index: 1000;
+}
+
+.logo {
+    font-family: 'Syncopate', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: -1px;
+}
+
+.logo span { color: var(--accent); }
+
+.nav-right a {
+    color: #eee; text-decoration: none; margin-right: 25px; font-size: 0.9rem; transition: 0.3s;
+}
+
+.nav-right a:hover { color: var(--accent); }
+
+.btn-login {
+    background: transparent; border: 1px solid var(--accent); color: var(--accent);
+    padding: 8px 18px; border-radius: 4px; cursor: pointer; font-weight: 600;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh; display: flex; align-items: center; padding: 0 8%;
+    background: radial-gradient(circle at 80%, #1a1a1a 0%, #0a0a0a 100%);
+}
+
+.hero-text { flex: 1; }
+
+.tag { color: var(--accent); font-weight: 700; letter-spacing: 3px; font-size: 0.7rem; }
+
+.hero-text h1 {
+    font-family: 'Syncopate', sans-serif; font-size: 4rem; margin: 15px 0; line-height: 1;
+}
+
+.highlight {
+    color: transparent; -webkit-text-stroke: 1px #fff;
+}
+
+.btn-cta {
+    display: inline-block; background: var(--accent); color: #000;
+    padding: 15px 35px; border-radius: 0; font-weight: 700; text-decoration: none;
+    margin-top: 30px; letter-spacing: 1px; transition: 0.3s;
+}
+
+.btn-cta:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3); }
+
+.main-shoe {
+    width: 120%; transform: rotate(-15deg); filter: drop-shadow(0 0 50px rgba(0,0,0,0.8));
+    animation: floating 4s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: rotate(-15deg) translateY(0); }
+    50% { transform: rotate(-10deg) translateY(-20px); }
+}
+
+/* Grid de Productos */
+.container { padding: 100px 8%; }
+
+.title-section {
+    font-family: 'Syncopate', sans-serif; font-size: 2rem; margin-bottom: 50px; text-align: center;
+}
+
+.title-section span { color: var(--accent); }
+
+.grid-productos {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;
+}
+
+.shoe-card {
+    background: var(--glass); border: 1px solid var(--border); padding: 20px;
+    position: relative; transition: 0.4s; overflow: hidden;
+}
+
+.shoe-card:hover { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+
+.shoe-card img { width: 100%; height: 250px; object-fit: contain; margin-bottom: 20px; }
+
+.badge-price {
+    position: absolute; top: 15px; right: 15px; background: var(--accent);
+    color: #000; font-weight: 700; padding: 5px 10px; font-size: 0.8rem;
+}
+
+.btn-buy {
+    width: 100%; padding: 12px; background: white; border: none; font-weight: 700;
+    margin-top: 15px; cursor: pointer; transition: 0.3s;
+}
+
+.btn-buy:hover { background: var(--accent); color: #000; }
+
+/* Footer */
+footer { background: #050505; padding: 80px 8% 20px; border-top: 1px solid var(--border); }
+
+.footer-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
+}
+
+.footer-box h4 { color: var(--accent); margin-bottom: 20px; font-family: 'Syncopate'; font-size: 0.8rem; }
+
+.social-links span { display: block; margin-bottom: 5px; color: #888; }
+
+.footer-bottom { text-align: center; margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 0.8rem; color: #444; }
+
+/* Modal */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 2000;
+}
+
+.modal-content {
+    background: #111; padding: 40px; border: 1px solid var(--accent); width: 100%; max-width: 400px;
+}
+
+.modal-content h2 span { color: var(--accent); }
+
+.modal-content input {
+    width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: white;
+}
+
+.btn-close {
+    background: none; border: none; color: #888; margin-top: 10px; cursor: pointer; text-decoration: underline;
+}
