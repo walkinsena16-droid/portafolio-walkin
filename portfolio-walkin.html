@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portafolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --bg2: #111218;
+      --bg3: #16171f;
+      --accent: #00e5a0;
+      --accent2: #7c6af7;
+      --text: #f0f0f5;
+      --muted: #7a7a90;
+      --border: rgba(255,255,255,0.07);
+      --card: #13141c;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,12,16,0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* HERO */
+    #inicio {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6rem 2rem 4rem;
+      max-width: 1000px; margin: 0 auto;
+      position: relative;
+    }
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .hero-label::before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
+    h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    h1 .highlight {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 3rem;
+      line-height: 1.8;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); color: #0b0c10; }
+    .btn-primary:hover { background: #00ffb2; transform: translateY(-1px); }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: transparent; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .hero-scroll::after { content: ''; display: block; width: 1px; height: 50px; background: var(--muted); }
+
+    /* SECTIONS */
+    section { max-width: 1000px; margin: 0 auto; padding: 6rem 2rem; }
+    .sec-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+    h2 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .sec-divider { width: 48px; height: 2px; background: var(--accent); margin-bottom: 3.5rem; border-radius: 1px; }
+
+    /* SOBRE MÍ */
+    #sobre .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+    }
+    .about-text p strong { color: var(--text); font-weight: 600; }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .stat-box:hover { border-color: rgba(0,229,160,0.25); }
+    .stat-box .num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .stat-box .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .info-row {
+      display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem;
+    }
+    .info-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.85rem; color: var(--muted);
+    }
+    .info-item .ico {
+      width: 28px; height: 28px;
+      background: rgba(0,229,160,0.08);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; flex-shrink: 0;
+    }
+    .info-item strong { color: var(--text); }
+
+    /* PROYECTOS */
+    #proyectos { background: var(--bg2); max-width: 100%; padding: 6rem 0; }
+    #proyectos .inner { max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .project-card:hover { border-color: rgba(0,229,160,0.3); transform: translateY(-4px); }
+    .project-card::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .project-card:hover::before { transform: scaleX(1); }
+    .project-body { padding: 1.8rem; }
+    .project-tag {
+      display: inline-block;
+      background: rgba(0,229,160,0.08);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+    .project-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+    }
+    .project-card p {
+      font-size: 0.83rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+    .project-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: gap 0.2s;
+    }
+    .project-link:hover { gap: 0.7rem; }
+    .project-link::after { content: '→'; }
+
+    /* PORTAFOLIO VIEJO */
+    #portafolio-viejo {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .old-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .old-card::after {
+      content: 'v1.0';
+      position: absolute;
+      top: 1.5rem; right: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(0,229,160,0.3);
+      letter-spacing: 0.1em;
+    }
+    .old-card-text h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .old-card-text p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 440px;
+      line-height: 1.75;
+    }
+    .old-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 1.8rem;
+      border: 1px solid rgba(0,229,160,0.35);
+      color: var(--accent);
+      background: rgba(0,229,160,0.05);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .old-link:hover { background: rgba(0,229,160,0.12); border-color: var(--accent); transform: translateY(-1px); }
+
+    /* HABILIDADES */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+    .skill-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.4rem 1.5rem;
+      transition: all 0.2s;
+    }
+    .skill-item:hover { border-color: rgba(0,229,160,0.25); }
+    .skill-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
+    .skill-name { font-size: 0.9rem; font-weight: 600; }
+    .skill-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+    .bar-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 1.2s ease; }
+    .skill-cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.6rem;
+    }
+
+    /* CONTACTO */
+    #contacto { text-align: center; }
+    #contacto .sub {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      max-width: 440px;
+      margin-left: auto; margin-right: auto;
+      line-height: 1.8;
+    }
+    .contact-items {
+      display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem;
+    }
+    .contact-item {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .contact-item:hover { border-color: rgba(0,229,160,0.3); color: var(--text); }
+    .contact-item .ico { font-size: 1.1rem; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 700px) {
+      .nav-links { display: none; }
+      #sobre .grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .old-card { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="#inicio">walkin.dev</a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#proyectos">Proyectos</a></li>
+    <li><a href="#portafolio-viejo">Anterior</a></li>
+    <li><a href="#habilidades">Habilidades</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="inicio">
+  <div class="hero-label">Portafolio estudiantil</div>
+  <h1>Mi<br><span class="highlight">Portafolio.</span></h1>
+  <div class="hero-btns">
+    <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+  </div>
+</section>
+
+<!-- PROYECTOS -->
+<section id="proyectos">
+  <div class="inner">
+    <div class="sec-label">// proyectos</div>
+    <h2>Páginas web <span>realizadas</span></h2>
+    <div class="sec-divider"></div>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>CCS Practica</h3>
+          <p>Práctica de CSS: colores, estilos, selectores y organización visual de elementos en una página.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/ccs%20practica%20(2)/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Formulario</h3>
+          <p>Práctica de formularios HTML con campos de texto, botones y estructura de entrada de datos.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/Formulario%20walkin/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Hipervínculo</h3>
+          <p>Práctica de enlaces e hipervínculos internos y externos en HTML con navegación entre páginas.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/HIPERVINCULO/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Kickshop</h3>
+          <p>Proyecto de tienda de tenis — diseño de una página de productos con identidad visual propia.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/KICKSHOP/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Practica</h3>
+          <p>Ejercicios de estructura HTML, uso de etiquetas semánticas y organización de contenido.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/PRACTICA/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Practica CSS 2.0</h3>
+          <p>Segunda práctica de CSS con estilos avanzados, sombras, bordes y diseño más elaborado.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/PRACTICA%20CSS%202.0/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Tarea CSS</h3>
+          <p>Tarea de CSS aplicando estilos, colores y diseño adaptable a una página web completa.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/tarea%20css%20walkin/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-tag">HTML · CSS</div>
+          <h3>Walkin 13</h3>
+          <p>Proyecto personal con diseño propio, estructura HTML completa y estilos personalizados.</p>
+          <a href="https://walkinsena16-droid.github.io/portafolio-walkin/WALKIN%2013/index.html" target="_blank" class="project-link">Abrir página</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PORTAFOLIO VIEJO -->
+<section id="portafolio-viejo">
+  <div class="sec-label">// versión anterior</div>
+  <h2>Mi portafolio <span>original</span></h2>
+  <div class="sec-divider"></div>
+  <div class="old-card">
+    <div class="old-card-text">
+      <h3>Mi Biografía — v1.0</h3>
+      <p>Esta fue la primera versión de mi portafolio: HTML puro, sin frameworks ni librerías. El punto de partida de todo. Puedes visitarlo para ver desde dónde empecé.</p>
+    </div>
+    <a href="https://walkinsena16-droid.github.io/portafolio-walkin/MI%20BIOGRAF%C3%8DA/index.html" target="_blank" class="old-link">Abrir portafolio viejo →</a>
+  </div>
+</section>
+
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="sec-label">// contacto</div>
+  <h2>Gracias por visitar<br>mi <span>portafolio.</span></h2>
+  <div class="sec-divider" style="margin-left:auto;margin-right:auto;"></div>
+  <p class="sub">Este espacio reúne mi progreso, mis prácticas y mis metas como estudiante de desarrollo de aplicaciones.</p>
+  <div class="contact-items">
+    <span class="contact-item"><span class="ico">📍</span> Santo Domingo, RD</span>
+    <span class="contact-item"><span class="ico">🎓</span> Fe y Alegría — DAI</span>
+    <span class="contact-item"><span class="ico">📅</span> 2025 – 2026</span>
+  </div>
+  <br><br>
+  <a href="#inicio" class="btn btn-outline">↑ Volver arriba</a>
+</section>
+
+<footer>
+  Portafolio de Walkin Osiris Eusebio Sena &nbsp;|&nbsp; 2025 – 2026
+</footer>
+
+</body>
+</html>
